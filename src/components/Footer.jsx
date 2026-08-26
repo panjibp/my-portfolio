@@ -1,0 +1,59 @@
+import React, { useState, useEffect } from 'react';
+import { ArrowUp, Terminal } from 'lucide-react';
+import { portfolioData } from '../data/portfolioData';
+
+export default function Footer() {
+  const [showTopBtn, setShowTopBtn] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowTopBtn(window.scrollY > 250);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <footer className="footer-wrapper">
+      <div className="container">
+        {/*
+        <div className="footer-content">
+            < div >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <Terminal size={18} color="var(--accent-primary)" />
+              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
+                {portfolioData.personal.name}
+              </span>
+            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              High-Performance Engineering & Digital Architecture
+            </p>
+          </div>
+        </div>
+        */}
+
+        {/* Copyright Bar */}
+        <div className="footer-bottom">
+          <span>
+            © {new Date().getFullYear()} {portfolioData.personal.name}. All rights reserved.
+          </span>
+        </div>
+      </div>
+
+      {/* Sticky Back to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`back-to-top-btn ${showTopBtn ? 'visible' : ''}`}
+        aria-label="Back to Top"
+      >
+        <span>Back to Top</span>
+        <ArrowUp size={16} />
+      </button>
+    </footer >
+  );
+}
