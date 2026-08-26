@@ -40,7 +40,7 @@ export default function Navbar({ themeMode, onToggleTheme }) {
   ];
 
   return (
-    <header className={`navbar-fixed ${scrolled ? 'scrolled' : ''}`}>
+    <header className={`navbar-fixed ${scrolled ? 'scrolled' : ''} ${mobileOpen ? 'menu-open' : ''}`}>
       <div className="container navbar-container">
         {/* Brand Status */}
         <a href="#hero" className="navbar-brand">
@@ -54,6 +54,14 @@ export default function Navbar({ themeMode, onToggleTheme }) {
         <div className="nav-right-group">
           {/* Navigation Links */}
           <nav className={`nav-menu ${mobileOpen ? 'open' : ''}`}>
+            {/* Mobile Close Button (Inside Sidebar) */}
+            <button
+              className="mobile-close-btn"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close Navigation Menu"
+            >
+              <X size={24} />
+            </button>
             {navLinks.map((link) => (
               <a
                 key={link.name}
