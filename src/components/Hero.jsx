@@ -19,7 +19,7 @@ export default function Hero() {
 
           {/* Action Buttons */}
           <div className="hero-actions">
-            <a href="#projects" className="btn btn-secondary">
+            <a href="#experience" className="btn btn-secondary">
               <span>Explore Work</span>
             </a>
 
