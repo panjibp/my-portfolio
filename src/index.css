@@ -121,8 +121,17 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 60px;
+  /* Untuk Mobile */
   color-scheme: dark;
   background-color: var(--bg-space);
+}
+
+/* Untuk Web / Desktop View (Lebar layar di atas 900px) */
+@media (min-width: 901px) {
+  html {
+    scroll-padding-top: 5px;
+  }
 }
 
 [data-theme="light"] html,
@@ -292,6 +301,9 @@ textarea {
   border-radius: 50%;
   position: relative;
   box-shadow: 0 0 10px var(--status-online-glow);
+  flex-shrink: 0;
+  margin-top: 6px;
+  margin-right: 12px;
 }
 
 .pulse-dot::after {
@@ -299,8 +311,8 @@ textarea {
   position: absolute;
   top: -4px;
   left: -4px;
-  width: 16px;
-  height: 16px;
+  right: -4px;
+  bottom: -4px;
   border-radius: 50%;
   background-color: var(--status-online);
   opacity: 0.5;

@@ -45,7 +45,7 @@ export default function Navbar({ themeMode, onToggleTheme }) {
         {/* Brand Status */}
         <a href="#hero" className="navbar-brand">
           <span className="brand-tagline">
-            <span className="pulse-dot" style={{ width: '6px', height: '6px', display: 'inline-block', marginRight: '13px' }} />
+            <span className="pulse-dot" />
             {portfolioData.personal.status}
           </span>
         </a>
