@@ -6,7 +6,7 @@ export const portfolioData = {
       "Full-Stack Software Engineer"
     ],
     status: "Available for new projects, consultation, and opportunities",
-    location: "Jakarta, Indonesia (UTC+7)",
+    location: "Jakarta, Indonesia",
     bio: "With years of experience, I ensure your web applications run flawlessly. From squashing bugs and resolving client issues to building and optimizing features, I'm here to maintain and elevate your software's performance.",
     shortBio: "Transforming complex challenges into elegant, high-impact digital solutions.",
     email: "panji.bp.bp@gmail.com",

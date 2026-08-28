@@ -214,9 +214,26 @@ textarea {
   z-index: 1;
 }
 
+/* Adjust distance between Experience and Contact */
+#experience {
+  padding-bottom: 40px;
+}
+
+#contact {
+  padding-top: 90px;
+}
+
 @media (max-width: 768px) {
   .section-wrapper {
     padding: 60px 0;
+  }
+
+  #experience {
+    padding-bottom: 30px;
+  }
+
+  #contact {
+    padding-top: 30px;
   }
 }
 
