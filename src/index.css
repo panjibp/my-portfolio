@@ -216,7 +216,7 @@ textarea {
 
 /* Adjust distance between Experience and Contact */
 #experience {
-  padding-bottom: 40px;
+  padding-bottom: 50px;
 }
 
 #contact {
@@ -229,7 +229,7 @@ textarea {
   }
 
   #experience {
-    padding-bottom: 30px;
+    padding-bottom: 45px;
   }
 
   #contact {
