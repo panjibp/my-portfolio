@@ -8,26 +8,33 @@ export default function Navbar({ themeMode, onToggleTheme }) {
   const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
+    let isTicking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 30);
 
-      const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
-      const scrollPosition = window.scrollY + 200;
+          const sections = ['hero', 'about', 'skills', 'projects', 'experience', 'contact'];
+          const scrollPosition = window.scrollY + 200;
 
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(section);
-            break;
+          for (const section of sections) {
+            const el = document.getElementById(section);
+            if (el) {
+              const top = el.offsetTop;
+              const height = el.offsetHeight;
+              if (scrollPosition >= top && scrollPosition < top + height) {
+                setActiveSection((prev) => prev !== section ? section : prev);
+                break;
+              }
+            }
           }
-        }
+          isTicking = false;
+        });
+        isTicking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

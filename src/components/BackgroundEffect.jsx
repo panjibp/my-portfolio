@@ -46,9 +46,24 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
       gridCtx.stroke();
     };
 
+    let prevWidth = window.innerWidth;
+    let prevHeight = window.innerHeight;
+
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+      
+      // On mobile, scrolling often changes innerHeight slightly (address bar hides/shows).
+      // We only resize if width changed (orientation change) or height changed significantly (> 100px).
+      if (newWidth === prevWidth && Math.abs(newHeight - prevHeight) < 100) {
+        return;
+      }
+      
+      prevWidth = newWidth;
+      prevHeight = newHeight;
+      
+      width = canvas.width = newWidth;
+      height = canvas.height = newHeight;
       drawGridToOffscreen();
     };
 

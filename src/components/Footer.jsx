@@ -6,11 +6,18 @@ export default function Footer() {
   const [showTopBtn, setShowTopBtn] = useState(false);
 
   useEffect(() => {
+    let isTicking = false;
     const handleScroll = () => {
-      setShowTopBtn(window.scrollY > 250);
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          setShowTopBtn(window.scrollY > 250);
+          isTicking = false;
+        });
+        isTicking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
