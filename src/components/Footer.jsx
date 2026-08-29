@@ -4,6 +4,7 @@ import { portfolioData } from '../data/portfolioData';
 
 export default function Footer() {
   const [showTopBtn, setShowTopBtn] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
 
   useEffect(() => {
     let isTicking = false;
@@ -11,6 +12,10 @@ export default function Footer() {
       if (!isTicking) {
         window.requestAnimationFrame(() => {
           setShowTopBtn(window.scrollY > 250);
+
+          const isBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+          setAtBottom(isBottom);
+
           isTicking = false;
         });
         isTicking = true;
@@ -55,7 +60,7 @@ export default function Footer() {
       {/* Sticky Back to Top Button */}
       <button
         onClick={scrollToTop}
-        className={`back-to-top-btn ${showTopBtn ? 'visible' : ''}`}
+        className={`back-to-top-btn ${showTopBtn ? 'visible' : ''} ${atBottom ? 'at-bottom' : ''}`}
         aria-label="Back to Top"
       >
         <span>Back to Top</span>
