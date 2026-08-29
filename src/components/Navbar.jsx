@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
@@ -6,6 +6,23 @@ export default function Navbar({ themeMode, onToggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const navRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (mobileOpen && navRef.current && !navRef.current.contains(event.target)) {
+        setMobileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [mobileOpen]);
 
   useEffect(() => {
     let isTicking = false;
@@ -58,7 +75,7 @@ export default function Navbar({ themeMode, onToggleTheme }) {
         </a>
 
         {/* Right Group: Navigation Links & Theme Toggle */}
-        <div className="nav-right-group">
+        <div className="nav-right-group" ref={navRef}>
           {/* Navigation Links */}
           <nav className={`nav-menu ${mobileOpen ? 'open' : ''}`}>
             {/* Mobile Close Button (Inside Sidebar) */}
