@@ -37,6 +37,7 @@ export default function App() {
       duration: 0.8, // Decreased from 1.2 for faster response
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      smoothTouch: true, // Enable smooth scrolling for touch devices (mobile view)
       wheelMultiplier: 1.2, // Increased from 1.0 for lighter scrolling effort
       touchMultiplier: 2,
     });
