@@ -15,12 +15,34 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(portfolioData.personal.email);
-    setCopied(true);
-
-
-    setTimeout(() => setCopied(false), 2500);
+  const handleCopyEmail = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(portfolioData.personal.email);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = portfolioData.personal.email;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+        } catch (error) {
+          console.error("Copy failed", error);
+        }
+        textArea.remove();
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {
+      console.error('Failed to copy!', err);
+      // Fallback: still show feedback to user even if it failed, or show error
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -106,24 +128,37 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Copy Email CTA Button */}
-            <button
-              onClick={handleCopyEmail}
-              className="btn btn-secondary"
-              style={{ width: '100%', justifyContent: 'center' }}
-            >
-              {copied ? (
-                <>
-                  <Check size={16} color="#10b981" />
-                  <span style={{ color: '#10b981' }}>Email Copied to Clipboard!</span>
-                </>
-              ) : (
-                <>
-                  <Copy size={16} />
-                  <span>Copy Direct Email Address</span>
-                </>
-              )}
-            </button>
+            {/* CTA Buttons Container */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* Send Email CTA Button */}
+              <a
+                href={`mailto:${portfolioData.personal.email}`}
+                className="btn btn-secondary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <Send size={16} />
+                <span>Send Direct Email</span>
+              </a>
+
+              {/* Copy Email CTA Button */}
+              <button
+                onClick={handleCopyEmail}
+                className="btn btn-secondary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                {copied ? (
+                  <>
+                    <Check size={16} color="#10b981" />
+                    <span style={{ color: '#10b981' }}>Email Copied to Clipboard!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={16} />
+                    <span>Copy Direct Email Address</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             {/* Social Channels */}
             {/*
