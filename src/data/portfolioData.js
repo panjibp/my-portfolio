@@ -53,14 +53,14 @@ export const portfolioData = {
       skills: [
         { name: "JavaScript / TypeScript", level: 100, icon: "FileCode" },
         { name: "React / Next.js", level: 100, icon: "Code" },
-        { name: "Tailwind / Modern CSS", level: 100, icon: "Palette" },
+        { name: "CSS / Tailwind", level: 100, icon: "Palette" },
       ]
     },
     {
       id: "backend",
       name: "Backend Engineering",
       skills: [
-        { name: "Go / Coldfusion / PHP / Javascript", level: 100, icon: "Bot" },
+        { name: "Go / Coldfusion / PHP / Javascript", level: 100, icon: "FileCode" },
         { name: "Relational Databases", level: 100, icon: "Database" },
         { name: "System Design", level: 100, icon: "Workflow" }
       ]
