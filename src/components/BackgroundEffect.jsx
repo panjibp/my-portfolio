@@ -20,9 +20,36 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
       radius: 160
     };
 
+    // Offscreen canvas for the static grid
+    const gridCanvas = document.createElement('canvas');
+    const gridCtx = gridCanvas.getContext('2d');
+
+    const drawGridToOffscreen = () => {
+      gridCanvas.width = width;
+      gridCanvas.height = height;
+      const gridSize = 60;
+      gridCtx.lineWidth = 1;
+      gridCtx.strokeStyle = isLight
+        ? 'rgba(0, 0, 0, 0.035)'
+        : 'rgba(255, 255, 255, 0.015)';
+
+      gridCtx.clearRect(0, 0, width, height);
+      gridCtx.beginPath();
+      for (let x = 0; x < width; x += gridSize) {
+        gridCtx.moveTo(x, 0);
+        gridCtx.lineTo(x, height);
+      }
+      for (let y = 0; y < height; y += gridSize) {
+        gridCtx.moveTo(0, y);
+        gridCtx.lineTo(width, y);
+      }
+      gridCtx.stroke();
+    };
+
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      drawGridToOffscreen();
     };
 
     const handleMouseMove = (e) => {
@@ -33,14 +60,31 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Particle Setup
-    const particleCount = Math.min(Math.floor(width / 24), 65);
+    // Particle Setup (Optimized for lower-end devices while keeping the visual feature intact)
+    const particleCount = Math.min(Math.floor(width / 36), 35);
     const particles = [];
 
     const isLight = themeMode === 'light';
     const colors = isLight
       ? { main: '2, 132, 199', alt: '37, 99, 235' }
       : { main: '0, 242, 254', alt: '79, 172, 254' };
+
+    drawGridToOffscreen();
+
+    // Pre-render a base glowing particle to an offscreen canvas
+    const particleCanvas = document.createElement('canvas');
+    const pCtx = particleCanvas.getContext('2d');
+    const pSize = 24; // Ensure enough padding for shadow (max radius ~2.4 + blur 8)
+    const pCenter = pSize / 2;
+    particleCanvas.width = pSize;
+    particleCanvas.height = pSize;
+    
+    pCtx.beginPath();
+    pCtx.arc(pCenter, pCenter, 2, 0, Math.PI * 2); // Base radius of 2
+    pCtx.fillStyle = `rgba(${colors.main}, 1)`;
+    pCtx.shadowBlur = isLight ? 4 : 8;
+    pCtx.shadowColor = `rgba(${colors.main}, ${isLight ? 0.3 : 0.5})`;
+    pCtx.fill();
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -61,13 +105,15 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
       mouse.y += (mouse.targetY - mouse.y) * 0.05;
 
       // Cyber ambient radial glow following cursor
+      // Fill only a bounded area instead of the entire screen to reduce GPU fill rate
+      const glowRadius = 400;
       const radialGradient = ctx.createRadialGradient(
         mouse.x,
         mouse.y,
         0,
         mouse.x,
         mouse.y,
-        400
+        glowRadius
       );
       radialGradient.addColorStop(
         0,
@@ -75,28 +121,10 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
       );
       radialGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = radialGradient;
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(mouse.x - glowRadius, mouse.y - glowRadius, glowRadius * 2, glowRadius * 2);
 
-      // Draw subtle grid lines
-      const gridSize = 60;
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = isLight
-        ? 'rgba(0, 0, 0, 0.035)'
-        : 'rgba(255, 255, 255, 0.015)';
-
-      for (let x = 0; x < width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-
-      for (let y = 0; y < height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
+      // Draw static grid from offscreen canvas
+      ctx.drawImage(gridCanvas, 0, 0);
 
       // Update and draw particles
       for (let i = 0; i < particles.length; i++) {
@@ -109,23 +137,28 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Particle rendering
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${colors.main}, ${p.alpha})`;
-        ctx.shadowBlur = isLight ? 4 : 8;
-        ctx.shadowColor = `rgba(${colors.main}, ${isLight ? 0.3 : 0.5})`;
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        // Particle rendering using pre-rendered offscreen canvas (highly optimized)
+        const scale = p.radius / 2;
+        const drawSize = pSize * scale;
+        ctx.globalAlpha = p.alpha;
+        ctx.drawImage(
+          particleCanvas,
+          p.x - drawSize / 2,
+          p.y - drawSize / 2,
+          drawSize,
+          drawSize
+        );
+        ctx.globalAlpha = 1.0;
 
         // Connect nearby particles
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
 
-          if (dist < 110) {
+          if (distSq < 12100) { // 110 * 110
+            const dist = Math.sqrt(distSq);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -140,8 +173,11 @@ export default function BackgroundEffect({ themeMode = 'dark' }) {
         // Connect to mouse cursor
         const mdx = p.x - mouse.x;
         const mdy = p.y - mouse.y;
-        const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist < mouse.radius) {
+        const mdistSq = mdx * mdx + mdy * mdy;
+        const mRadiusSq = mouse.radius * mouse.radius;
+        
+        if (mdistSq < mRadiusSq) {
+          const mdist = Math.sqrt(mdistSq);
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);

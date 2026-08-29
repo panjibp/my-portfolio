@@ -12,6 +12,9 @@ import Experience from './components/Experience';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
+
 export default function App() {
   const [themeMode, setThemeMode] = useState(() => {
     return localStorage.getItem('portfolio_theme') || 'light';
@@ -28,10 +31,32 @@ export default function App() {
     localStorage.setItem('portfolio_theme', themeMode);
   }, [themeMode]);
 
+  // Initialize Lenis for Smooth Scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 0.8, // Decreased from 1.2 for faster response
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1.2, // Increased from 1.0 for lighter scrolling effort
+      touchMultiplier: 2,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <div className="app-root">
       {/* High-tech scanline texture */}
-      <div className="scanline" />
+      <div className="scanline" style={{ transform: 'translateZ(0)' }} />
 
       {/* Interactive Cyber Background Grid & Particles */}
       <BackgroundEffect themeMode={themeMode} />

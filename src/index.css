@@ -348,8 +348,8 @@ textarea {
 /* Futuristic Glass Card */
 .glass-card {
   background: var(--bg-card);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
@@ -410,8 +410,8 @@ textarea {
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-medium);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   box-shadow: 0 8px 25px -6px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow-subtle);
   border-radius: var(--radius-sm);
   position: relative;
